@@ -10,7 +10,6 @@
 ### project_name.qpf Quartus II project file
 ### project_name.qsf Quartus constraint file (lists the hardware constraints defined for a project, from the used chip and pinout to timing constraints)
 ### project_name.qws Quartus Window Settings ? (the configuration of the Quartus gui for the project, may be omitted)
-STPU.qws
 
 # top level source files:
 ### project_name.bdf Block diagram / Schematic file (top level schematic file, there may be many nested files)
@@ -58,3 +57,5 @@ STPU.qws
 !*.tcl
 
 # End of https://www.toptal.com/developers/gitignore/api/alteraquartusii
+
+STPU.qws
