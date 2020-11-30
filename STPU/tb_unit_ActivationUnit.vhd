@@ -25,18 +25,16 @@ PORT MAP(clock => clock_sig, reset => reset_sig, hard_reset => hard_reset_sig, s
 			y_in0 => y_in0_sig, y_in1 => y_in1_sig, y_in2 => y_in2_sig, row0 => row0_sig, row1 => row1_sig, row2 => row2_sig, done => done_sig);
 
 PROCESS IS
+--procedure that sets values of y0-y2 and does a clock cycle
 PROCEDURE CLOCK_W_DATA(constant y0 : IN INTEGER; constant y1 : IN INTEGER; constant y2 : IN INTEGER) IS
-VARIABLE num : INTEGER;
 BEGIN
-
-	clock_sig <= '0';
-	y_in0_sig <= TO_UNSIGNED(y0,8);
-	y_in1_sig <= TO_UNSIGNED(y1,8);
-	y_in2_sig <= TO_UNSIGNED(y2,8);
-	wait for 20 ns;
-	clock_sig <= '1';
-	wait for 20 ns;
-
+clock_sig <= '0';
+y_in0_sig <= TO_UNSIGNED(y0,8);
+y_in1_sig <= TO_UNSIGNED(y1,8);
+y_in2_sig <= TO_UNSIGNED(y2,8);
+wait for 20 ns;
+clock_sig <= '1';
+wait for 20 ns;
 END PROCEDURE;
 BEGIN
 	-- sets / reset
@@ -92,7 +90,6 @@ BEGIN
 	stall_sig <= '1'; -- test after done (done signal should be kept raised)
 	CLOCK_W_DATA(99,99,99); -- garbage data that should be ignored
 	stall_sig <= '0'; -- continue
-	
 	
 	WAIT; --process is done, wait for completion
 END PROCESS;

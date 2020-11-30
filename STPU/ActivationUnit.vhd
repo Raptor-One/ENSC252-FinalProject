@@ -17,11 +17,11 @@ TYPE matrix_buffer_type IS ARRAY (0 to 2, 0 to 1) OF UNSIGNED(N-1 DOWNTO 0);
 SIGNAL matrix_buffer : matrix_buffer_type;
 BEGIN
 
-buf: FOR r IN 0 TO 2 GENERATE
+buf: FOR r IN 0 TO 2 GENERATE -- store the past 2 values in a cycling buffer
 	matrix_buffer(r,0) <= matrix_buffer(r,1) WHEN rising_edge(clock) AND stall = '0';
 END GENERATE;
 
-PROCESS(clock)
+PROCESS(clock) -- add the latest values into the buffer
 BEGIN
 IF(rising_edge(clock) AND stall = '0') THEN
 	matrix_buffer(0,1) <= y_in0;
@@ -39,14 +39,14 @@ IF(reset = '1' OR hard_reset = '1') THEN
 ELSIF(rising_edge(clock) AND stall = '0' AND data_start = '1') THEN
 	timer <= timer + 1;
 	done <= '0';
-	
+	-- depending on current state of timer, load data in the buffer and current value into an output row
 	IF(timer = matrixSize + 2) THEN
 		row0 <= (matrix_buffer(0,0), matrix_buffer(0,1), y_in0);
 	ELSIF(timer = matrixSize + 3) THEN
 		row1 <= (matrix_buffer(1,0), matrix_buffer(1,1), y_in1);
 	ELSIF(timer = matrixSize + 4) THEN
 		row2 <= (matrix_buffer(2,0), matrix_buffer(2,1), y_in2);
-		timer <= matrixSize + 2;
+		timer <= matrixSize + 2; -- setback timer to be ready for next matrix
 		done <= '1';
 	END IF;
 	
