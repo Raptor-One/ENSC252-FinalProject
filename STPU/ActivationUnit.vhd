@@ -18,6 +18,7 @@ GENERIC( maxState : UNSIGNED := "11"; wrapBackState : UNSIGNED := "00" );
 PORT( clock, reset, enable : IN STD_LOGIC;
 		state : out UNSIGNED(maxState'length-1 DOWNTO 0));
 END COMPONENT;
+
 SIGNAL sc_reset, sc_enable : STD_LOGIC;
 SIGNAL timer : UNSIGNED(2 DOWNTO 0);
 TYPE matrix_buffer_type IS ARRAY (0 to 2, 0 to 1) OF UNSIGNED(N-1 DOWNTO 0);

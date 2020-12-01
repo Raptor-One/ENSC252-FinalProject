@@ -12,6 +12,12 @@ END STPU;
 
 ARCHITECTURE Structure OF STPU IS
 
+COMPONENT StateCounter IS
+GENERIC( maxState : UNSIGNED := "11"; wrapBackState : UNSIGNED := "00" );
+PORT( clock, reset, enable : IN STD_LOGIC;
+		state : out UNSIGNED(maxState'length-1 DOWNTO 0));
+END COMPONENT;
+
 COMPONENT MMU IS
 PORT( clock, reset, hard_reset, ld, ld_w_stall : IN STD_LOGIC;
 		a0, a1, a2, w0, w1, w2 : IN UNSIGNED(7 DOWNTO 0);
@@ -39,7 +45,8 @@ PORT( clock, reset, hard_reset, stall, data_start : IN STD_LOGIC;
 		row0, row1, row2 : OUT bus_type);
 END COMPONENT;
 
-SIGNAL loadState, goState : UNSIGNED(1 DOWNTO 0) := "00";
+SIGNAL setup_sc_enable : STD_LOGIC;
+SIGNAL setupState, goState : UNSIGNED(1 DOWNTO 0) := "00";
 SIGNAL wram_addr, uram_addr : STD_LOGIC_VECTOR(1 DOWNTO 0);
 SIGNAL wram_read, uram_read, wram_write, uram_write, wram_clr, uram_clr, ac_data_start : STD_LOGIC;
 SIGNAl w_data_in : STD_LOGIC_VECTOR(23 DOWNTO 0);
@@ -52,30 +59,19 @@ wr : WRAM PORT MAP(aclr => open, address => wram_addr, clock => clock, data => w
 --									  y_in0 => open, y_in1 => open, y_in2 => open, done => done, row0 => y0, row1 => y1, row2 => y2);
 
 -- setup logic ====================================================
+setup_sc_enable <= (setup AND NOT setupState(0) AND NOT setupState (1)) OR (setupState(1) OR setupState(0));
+sc : StateCounter GENERIC MAP(maxState => "10", wrapBackState => "00")
+PORT MAP(clock => clock, reset => hard_reset, enable => setup_sc_enable, state => setupState);
+
 w_data_in <= STD_LOGIC_VECTOR(weights);
-wram_addr <= STD_LOGIC_VECTOR(loadState OR goState);
-wram_write <= loadState(1) OR loadState(0) OR setup;
+wram_addr <= STD_LOGIC_VECTOR(setupState OR goState);
+wram_write <= setupState(1) OR setupState(0) OR setup;
 
 u0_data_in <= STD_LOGIC_VECTOR(a_in(23 DOWNTO 16));
 u1_data_in <= STD_LOGIC_VECTOR(a_in(15 DOWNTO 8));
 u2_data_in <= STD_LOGIC_VECTOR(a_in(7 DOWNTO 0));
-uram_addr <= STD_LOGIC_VECTOR(loadState);
-uram_write <= loadState(1) OR loadState(0) OR setup;
-
-PROCESS(clock)
-BEGIN
-	IF(rising_edge(clock)) THEN
-		IF(setup = '1' AND loadState = "00") THEN
-			loadState <= "01";
-		END IF;
-		IF(loadState = "10") THEN
-			loadState <= "00";
-		ELSIF(loadState /= "00") THEN
-			loadState <= loadState + 1;
-		END IF;
-	END IF;
-
-END PROCESS;
+uram_addr <= STD_LOGIC_VECTOR(setupState);
+uram_write <= setupState(1) OR setupState(0) OR setup;
 
 -- go logic ====================================================
 --ac_data_start <= goState = "11";
