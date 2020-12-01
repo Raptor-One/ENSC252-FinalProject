@@ -19,7 +19,7 @@ PORT( clock, reset, enable : IN STD_LOGIC;
 END COMPONENT;
 
 COMPONENT MMU IS
-PORT( clock, reset, hard_reset, ld, ld_w_stall : IN STD_LOGIC;
+PORT( clock, reset, hard_reset, ld, ld_w, stall : IN STD_LOGIC;
 		a0, a1, a2, w0, w1, w2 : IN UNSIGNED(7 DOWNTO 0);
 		y0, y1, y2 : OUT UNSIGNED(7 DOWNTO 0));
 END COMPONENT;
@@ -45,12 +45,14 @@ PORT( clock, reset, hard_reset, stall, data_start : IN STD_LOGIC;
 		row0, row1, row2 : OUT bus_type);
 END COMPONENT;
 
-SIGNAL setup_sc_enable : STD_LOGIC;
-SIGNAL setupState, goState : UNSIGNED(1 DOWNTO 0) := "00";
-SIGNAL wram_addr, uram_addr : STD_LOGIC_VECTOR(1 DOWNTO 0);
-SIGNAL wram_read, uram_read, wram_write, uram_write, wram_clr, uram_clr, ac_data_start : STD_LOGIC;
+SIGNAL setup_sc_enable, go_sc_enable, go_sc_reset : STD_LOGIC;
+SIGNAL setupState : UNSIGNED(1 DOWNTO 0);
+SIGNAL goState : UNSIGNED(2 DOWNTO 0) ;
+SIGNAL wram_addr, setup_uram_addr, go_uram0_addr, go_uram1_addr, go_uram2_addr : STD_LOGIC_VECTOR(1 DOWNTO 0);
+SIGNAL uram_read, wram_write, uram_write, wram_clr, uram_clr, ac_data_start : STD_LOGIC;
 SIGNAl w_data_in : STD_LOGIC_VECTOR(23 DOWNTO 0);
 SIGNAL u0_data_in, u1_data_in, u2_data_in : STD_LOGIC_VECTOR(7 DOWNTO 0);
+SIGNAL mmu_ld, mmu_ld_w : STD_LOGIC;
 BEGIN
 
 wr : WRAM PORT MAP(aclr => open, address => wram_addr, clock => clock, data => w_data_in, rden => '1', wren => wram_write, q => open);
@@ -60,34 +62,53 @@ wr : WRAM PORT MAP(aclr => open, address => wram_addr, clock => clock, data => w
 
 -- setup logic ====================================================
 setup_sc_enable <= (setup AND NOT setupState(0) AND NOT setupState (1)) OR (setupState(1) OR setupState(0));
-sc : StateCounter GENERIC MAP(maxState => "10", wrapBackState => "00")
+setup_sc : StateCounter GENERIC MAP(maxState => "10", wrapBackState => "00")
 PORT MAP(clock => clock, reset => hard_reset, enable => setup_sc_enable, state => setupState);
 
 w_data_in <= STD_LOGIC_VECTOR(weights);
-wram_addr <= STD_LOGIC_VECTOR(setupState OR goState);
+wram_addr <= STD_LOGIC_VECTOR(setupState OR goState(1 DOWNTO 0)); -- setup & go
 wram_write <= setupState(1) OR setupState(0) OR setup;
 
 u0_data_in <= STD_LOGIC_VECTOR(a_in(23 DOWNTO 16));
 u1_data_in <= STD_LOGIC_VECTOR(a_in(15 DOWNTO 8));
 u2_data_in <= STD_LOGIC_VECTOR(a_in(7 DOWNTO 0));
-uram_addr <= STD_LOGIC_VECTOR(setupState);
+setup_uram_addr <= STD_LOGIC_VECTOR(setupState);
 uram_write <= setupState(1) OR setupState(0) OR setup;
 
 -- go logic ====================================================
---ac_data_start <= goState = "11";
+go_sc_enable <= ((go AND NOT goState(0) AND NOT goState(1) AND NOT goState(2)) OR (goState(2) OR goState(1) OR goState(0))) AND NOT stall;
+go_sc_reset <= reset OR hard_reset;
+go_sc : StateCounter GENERIC MAP(maxState => "101", wrapBackState => "011")
+PORT MAP(clock => clock, reset => go_sc_reset, enable => go_sc_enable, state => goState);
+ac_data_start <= '1' WHEN goState > "010" ELSE '0';
 
---PROCESS(clock)
---BEGIN
---IF(rising_edge(clock) AND stall = '0') THEN
---		IF(go = '1' AND goState = "00") THEN
---			goState <= "01";
---		END IF;
---		IF(goState = "11") THEN
---			goState <= "00";
---		ELSIF(goState /= "00") THEN
---			goState <= goState + 1;
---		END IF;
---	END IF;
---END PROCESS;
---
+mmu_ld_w <= '1' WHEN (goState > "000" AND goState <= "010") OR go = '1' ELSE '0';
+mmu_ld <= goState(1) OR goState(0) OR go;
+
+PROCESS(goState)
+BEGIN
+go_uram0_addr <= "11";
+go_uram1_addr <= "11";
+go_uram2_addr <= "11";
+IF(goState = "001") THEN
+	go_uram0_addr <= "00";
+ELSIF(goState = "010") THEN
+	go_uram0_addr <= "01";
+	go_uram1_addr <= "00";
+ELSIF(goState = "011") THEN
+	go_uram0_addr <= "10";
+	go_uram1_addr <= "01";
+	go_uram2_addr <= "00";
+ELSIF(goState = "100") THEN
+	go_uram0_addr <= "00";
+	go_uram1_addr <= "10";
+	go_uram2_addr <= "01";
+ELSIF(goState = "101") THEN
+	go_uram0_addr <= "01";
+	go_uram1_addr <= "00";
+	go_uram2_addr <= "10";
+END IF;
+	
+END PROCESS;
+
 END Structure;
