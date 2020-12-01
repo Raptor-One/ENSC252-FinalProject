@@ -45,7 +45,7 @@ PORT( clock, reset, hard_reset, stall, data_start : IN STD_LOGIC;
 		row0, row1, row2 : OUT bus_type);
 END COMPONENT;
 
-SIGNAL setup_sc_enable, go_sc_enable, go_sc_reset : STD_LOGIC;
+SIGNAL setup_sc_enable, go_sc_enable, go_sc_reset, activation_unit_done : STD_LOGIC;
 SIGNAL setupState : UNSIGNED(1 DOWNTO 0);
 SIGNAL goState : UNSIGNED(2 DOWNTO 0) ;
 SIGNAL wram_addr, setup_uram_addr, go_uram0_addr, go_uram1_addr, go_uram2_addr : STD_LOGIC_VECTOR(1 DOWNTO 0);
@@ -58,7 +58,9 @@ BEGIN
 wr : WRAM PORT MAP(aclr => open, address => wram_addr, clock => clock, data => w_data_in, rden => '1', wren => wram_write, q => open);
 
 --ac : ActivationUnit PORT MAP(clock => clock, reset => reset, hard_reset => hard_reset, stall => stall, data_start => ac_data_start,
---									  y_in0 => open, y_in1 => open, y_in2 => open, done => done, row0 => y0, row1 => y1, row2 => y2);
+--									  y_in0 => open, y_in1 => open, y_in2 => open, done => activation_unit_done, row0 => y0, row1 => y1, row2 => y2);
+
+done <= activation_unit_done;
 
 -- setup logic ====================================================
 setup_sc_enable <= (setup AND NOT setupState(0) AND NOT setupState (1)) OR (setupState(1) OR setupState(0));
@@ -77,7 +79,7 @@ uram_write <= setupState(1) OR setupState(0) OR setup;
 
 -- go logic ====================================================
 go_sc_enable <= ((go AND NOT goState(0) AND NOT goState(1) AND NOT goState(2)) OR (goState(2) OR goState(1) OR goState(0))) AND NOT stall;
-go_sc_reset <= reset OR hard_reset;
+go_sc_reset <= reset OR hard_reset OR activation_unit_done; -- STPU only done of first result if computing only 1 matrix
 go_sc : StateCounter GENERIC MAP(maxState => "101", wrapBackState => "011")
 PORT MAP(clock => clock, reset => go_sc_reset, enable => go_sc_enable, state => goState);
 ac_data_start <= '1' WHEN goState > "010" ELSE '0';

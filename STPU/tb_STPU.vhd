@@ -66,6 +66,10 @@ go_sig <= '1';
 CLOCK;
 go_sig <= '0';
 CLOCK;
+stall_sig <= '1';
+CLOCK;
+CLOCK;
+stall_sig <= '0';
 FOR i IN 5 DOWNTO 0 LOOP
 	CLOCK;
 END LOOP;
