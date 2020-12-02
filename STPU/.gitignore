@@ -47,6 +47,8 @@
 !*.bdf
 !*.vhd
 !*.v
+!*.qip
+!*.cmp
 !*.ptf
 !*.bsf
 !**/class.ptf
