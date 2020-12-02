@@ -14,10 +14,10 @@ ARCHITECTURE structure of MAC is
 BEGIN
 		temp1<= a_in*weight_in;
 
-		temp3 <= (others=>'1') when (signed(temp1) > 254) else
+		temp3 <= (others=>'1') when (temp1 > 254) else
 				 temp1+part_in;
 		
-		mac_out<="11111111" when (signed(temp3) > 254) else
+		mac_out<="11111111" when (temp3 > 254) else
 				   resize(temp3, 8);
 		
 END ARCHITECTURE;

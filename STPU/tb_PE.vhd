@@ -28,14 +28,14 @@ PROCESS IS
 
 BEGIN
 
---res <= '1';        --nothing loads in here
---hard_res <= '1';
---ld <= '1';
---ldw <= '1';
---a_in <= "11111111";
---w_in <= "11111111";
---p_in <= "11111111";
---wait for 15 ns;
+res <= '1';        --nothing loads in here
+hard_res <= '1';
+ld <= '1';
+ldw <= '1';
+a_in <= "11111111";
+w_in <= "11111111";
+p_in <= "11111111";
+wait for 15 ns;
 
 res <= '0';        --only W loads
 hard_res <= '0';

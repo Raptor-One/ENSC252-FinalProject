@@ -55,7 +55,7 @@ SIGNAL u0_data_in, u1_data_in, u2_data_in : STD_LOGIC_VECTOR(7 DOWNTO 0);
 SIGNAL mmu_ld, mmu_ld_w : STD_LOGIC;
 BEGIN
 
-wr : WRAM PORT MAP(aclr => open, address => wram_addr, clock => clock, data => w_data_in, rden => '1', wren => wram_write, q => open);
+wr : WRAM PORT MAP(aclr => hard_reset, address => wram_addr, clock => clock, data => w_data_in, rden => '1', wren => wram_write, q => open);
 
 --ac : ActivationUnit PORT MAP(clock => clock, reset => reset, hard_reset => hard_reset, stall => stall, data_start => ac_data_start,
 --									  y_in0 => open, y_in1 => open, y_in2 => open, done => activation_unit_done, row0 => y0, row1 => y1, row2 => y2);
