@@ -3,7 +3,7 @@ USE IEEE.STD_LOGIC_1164.all;
 USE IEEE.NUMERIC_STD.all;
 
 ENTITY LoadRegister IS
-PORT( clock, ld, reset : IN STD_LOGIC;
+PORT( clock, ld, reset: IN STD_LOGIC;
 		D : IN UNSIGNED(7 DOWNTO 0);
 		Q : OUT UNSIGNED(7 DOWNTO 0));
 END LoadRegister;
