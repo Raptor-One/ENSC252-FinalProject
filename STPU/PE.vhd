@@ -14,7 +14,15 @@ COMPONENT LoadRegister IS
 	PORT (clock, ld, reset : IN STD_LOGIC;
 			D : IN UNSIGNED(7 DOWNTO 0);
 			Q : OUT UNSIGNED(7 DOWNTO 0));
-END LoadRegister;
+END COMPONENT;
 
 COMPONENT MAC IS 
-	PORT (
+	PORT (part_in, a_in, weight_in : IN unsigned(7 DOWNTO 0);
+			mac_out : OUT unsigned(7 DOWNTO 0));
+END COMPONENT;
+
+BEGIN
+
+
+
+END STRUCTURE;
