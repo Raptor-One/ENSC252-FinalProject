@@ -9,7 +9,7 @@ PORT( clock, ld, reset: IN STD_LOGIC;
 END LoadRegister;
 
 ARCHITECTURE structure of LoadRegister IS
-	SIGNAL temp : UNSIGNED(7 DOWNTO 0);
+	SIGNAL temp : UNSIGNED(7 DOWNTO 0) := "00";
 BEGIN 
 
 	PROCESS(clock, reset)
