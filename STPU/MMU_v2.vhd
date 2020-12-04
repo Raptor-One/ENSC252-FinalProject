@@ -19,7 +19,33 @@ END COMPONENT;
 SIGNAL GND: UNSIGNED(7 DOWNTO 0):="00000000";
 SIGNAL PSUM_11, PSUM_21, PSUM_12, PSUM_22, PSUM_13, PSUM_23, AOUT_11, AOUT_12, AOUT_21, AOUT_22, AOUT_31, AOUT_32: UNSIGNED(7 DOWNTO 0);
 
+Signal ps : std_logic_vector(2 downto 0):= "00"; --for present state (total 4 states) 		//  initalize here as idle
+Signal cm : std_logic:='0';		  --for current mode of operation	// initialized 0 for init mode
+
 BEGIN 
+
+ps<="00" when cm = '0' and ld_w = '1'
+
+process(clock, ps) 
+begin
+	if(rising_edge(clock)) then		-- checking for rising edge of clock
+		if(cm = ''0)		--checking for init mode
+			if(ps == ) then 		--idle
+			
+				ps<= 		-- next state basically
+				
+				elsif() then 			--load_col1
+				elsif() then 			--load_col2
+				elsif() then 			--load_col3
+					ps<=					-- back to first state and to next mode.
+					cm<= '1'
+			end if;
+		elsif			-- going to compute mode:
+			
+		
+		end if;
+	end if;
+	
 
 	PE_11: PE PORT MAP(clock => clock, reset => reset, hard_reset => hard_reset, ld => ld, ld_w => ld_w, a_in => a0, w_in => w0, part_in => GND, partial_sum => PSUM_11, a_out => AOUT_11);
 	PE_12: PE PORT MAP(clock => clock, reset => reset, hard_reset => hard_reset, ld => ld, ld_w => ld_w, a_in => AOUT_11, w_in => w0, part_in => GND, partial_sum => PSUM_12, a_out => AOUT_12);
