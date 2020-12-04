@@ -22,7 +22,7 @@ BEGIN
 
 DUT: PE PORT MAP(clock => clk, reset => res, hard_reset => hard_res, ld => ld, ld_w => ldw, a_in => a_in, w_in => w_in, part_in => p_in, partial_sum => p_sum, a_out => a_out);
 
-clk<= NOT clk after period  when NOW <630 ns;
+clk<= NOT clk after period WHEN NOW < 630 ns ELSE '0' ;
 
 PROCESS IS
 
