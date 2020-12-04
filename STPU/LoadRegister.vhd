@@ -11,7 +11,7 @@ END LoadRegister;
 ARCHITECTURE structure of LoadRegister IS
 	SIGNAL temp : UNSIGNED(7 DOWNTO 0) := "00";
 BEGIN 
-
+	temp <= (others=>'0'); 
 	PROCESS(clock, reset)
 	BEGIN
 	IF(reset = '1') then

@@ -62,7 +62,7 @@ ldw <= '1';
 a_in <= "00000101";
 w_in <= "00001010";
 p_in <= "00110010";
-wait for 85 ns;
+wait for 45 ns;
 
 res <= '0';        --5*10 + overflow of 255 = 255
 hard_res <= '0';
