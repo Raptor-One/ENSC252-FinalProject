@@ -51,7 +51,7 @@ BEGIN
 			ps<="10";		-- next state basicalyy
 		elsif(ps = "10" and ld_w = '1') then 			--load_col3
 			
-			ps<="11";  -- next state basically	
+			ps<="00";  -- next state basically	
 		elsif(ps = "11") then
 			ps<="00";		--  back to idle state.
 		end if;
@@ -62,20 +62,16 @@ BEGIN
 	
 END PROCESS;
 
-PROCESS(ps)
+PROCESS(ps, ld_w)
 BEGIN
-ld_c1<='0';
+ld_c1<= ld_w;
 ld_c2<='0';
 ld_c3<='0';
 if( ps = "01") then
-	ld_c1<='1';
-	ld_c2<='0';
-	ld_c3<='0';
-elsif(ps = "10") then
 	ld_c1<='0';
 	ld_c2<='1';
 	ld_c3<='0';
-elsif(ps = "11") then
+elsif(ps = "10") then
 	ld_c1<='0';
 	ld_c2<='0';
 	ld_c3<='1';

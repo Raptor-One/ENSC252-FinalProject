@@ -40,29 +40,54 @@ wait for 20 ns;
 clk <= '1';
 wait for 20 ns;
 END PROCEDURE;
-
+PROCEDURE CLOCK IS
+BEGIN
+clk <= '0';
+wait for 20 ns;
+clk <= '1';
+wait for 20 ns;
+END PROCEDURE;
 
 begin
 -- for reference:
 --CLOCK_DATA(reset, hard-reset, ld, ld_w, stall, w0, w1, w2, a0, a1, a2 );
 -- setup:
 CLOCK_DATA('1', '1', '0', '0', '0', 0, 0, 0, 0, 0, 0);
--- init mode for next 4 clock cycles: 
-CLOCK_DATA('0', '0', '0', '1', '0', 1, 4, 7, 0, 0, 0);
--- init mode for next 3 clock cycles: 
-CLOCK_DATA('0', '0', '0', '1', '0', 2, 5, 8, 0, 0, 0);
--- init mode for next 2 clock cycles: 
-CLOCK_DATA('0', '0', '0', '1', '0', 3, 6, 9, 0, 0, 0);
--- init mode for next 1 clock cycles: 
+CLOCK_DATA('0', '0', '0', '1', '0', 1, 2, 3, 0, 0, 0);
+CLOCK_DATA('0', '0', '0', '1', '0', 4, 5, 6, 0, 0, 0);
+CLOCK_DATA('0', '0', '0', '1', '0', 7, 8, 9, 0, 0, 0);
 CLOCK_DATA('0', '0', '0', '0', '0', 0, 0, 0, 0, 0, 0);
 
 --going to compute  mode:
--- loading 1st row:
-CLOCK_DATA('0', '0', '1', '0', '0', 0, 0, 0, 3, 6, 9);
--- loading 2nd row
-CLOCK_DATA('0', '0', '1', '0', '0', 0, 0, 0, 2, 5, 8);
--- loading 3rd row
-CLOCK_DATA('0', '0', '1', '0', '0', 0, 0, 0, 7, 8, 9);
+CLOCK_DATA('0', '0', '1', '0', '0', 0, 0, 0, 3, 0, 0);
+CLOCK_DATA('0', '0', '1', '0', '0', 0, 0, 0, 2, 6, 0);
+CLOCK_DATA('0', '0', '1', '0', '0', 0, 0, 0, 7, 5, 9);
+CLOCK_DATA('0', '0', '1', '0', '0', 0, 0, 0, 0, 8, 8);
+CLOCK_DATA('0', '0', '1', '0', '0', 0, 0, 0, 0, 0, 9);
+CLOCK_DATA('0', '0', '1', '0', '0', 0, 0, 0, 0, 0, 0);
+CLOCK;
+CLOCK;
+CLOCK;
+
+--going to compute mode with stalls:
+CLOCK_DATA('0', '0', '1', '0', '0', 0, 0, 0, 3, 0, 0);
+CLOCK_DATA('0', '0', '1', '0', '0', 0, 0, 0, 2, 6, 0);
+CLOCK_DATA('0', '0', '1', '0', '1', 0, 0, 0, 2, 6, 0);--stall
+CLOCK_DATA('0', '0', '1', '0', '1', 0, 0, 0, 2, 6, 0);--stall
+CLOCK_DATA('0', '0', '1', '0', '0', 0, 0, 0, 7, 5, 9);
+CLOCK_DATA('0', '0', '1', '0', '0', 0, 0, 0, 0, 8, 8);
+CLOCK_DATA('0', '0', '1', '0', '1', 0, 0, 0, 0, 8, 8);--stall
+CLOCK_DATA('0', '0', '1', '0', '0', 0, 0, 0, 0, 0, 9);
+CLOCK_DATA('0', '0', '1', '0', '0', 0, 0, 0, 0, 0, 0);
+CLOCK;
+stall <= '1'; -- check if outptus are held on stall
+CLOCK;
+CLOCK;
+CLOCK;
+stall <= '0';
+CLOCK;
+CLOCK;
+
 
 wait;
 end process;
