@@ -55,13 +55,13 @@ w_in <= "11111111";
 p_in <= "11111111";
 wait for 45 ns;
 
-res <= '0';        --5*10 + overflow of 50 = 100
+res <= '0';        --5*10 + overflow of 5 = 55
 hard_res <= '0';
 ld <= '1';
 ldw <= '1';
 a_in <= "00000101";
 w_in <= "00001010";
-p_in <= "00110010";
+p_in <= "00000101";
 wait for 45 ns;
 
 res <= '0';        --5*10 + overflow of 255 = 255
