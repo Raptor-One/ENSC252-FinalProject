@@ -22,9 +22,11 @@ DUT: MMU PORT MAP(clock=>clk, reset=>reset, hard_reset=>hard_reset, ld=>ld_sig, 
 
 process 
 
-PROCEDURE CLOCK_DATA( constant reset : in std_logic; constant hard_reset : in std_logic; constant ld : IN std_logic; constant ld_w_sig :  in std_logic; constant stall_sig : in std_logic; constant W0 : IN integer; constant W1 : IN integer; constant W2 : in integer ; constant A0: IN integer; constant A1: IN integer; constant A2: IN integer ) IS
+PROCEDURE CLOCK_DATA( constant reset_v : in std_logic; constant hard_reset_v : in std_logic; constant ld : IN std_logic; constant ld_w_sig :  in std_logic; constant stall_sig : in std_logic; constant W0 : IN integer; constant W1 : IN integer; constant W2 : in integer ; constant A0: IN integer; constant A1: IN integer; constant A2: IN integer ) IS
 BEGIN
 clk <= '0';
+reset <= reset_v;
+hard_reset <= hard_reset_v;
 ld_sig <= ld;
 ld_w <= ld_w_sig;
 stall<= stall_sig;
@@ -44,23 +46,23 @@ begin
 -- for reference:
 --CLOCK_DATA(reset, hard-reset, ld, ld_w, stall, w0, w1, w2, a0, a1, a2 );
 -- setup:
-CLOCK_DATA('1', '1', '0', '0', 'Z', 0, 0, 0, 0, 0, 0);
+CLOCK_DATA('1', '1', '0', '0', '0', 0, 0, 0, 0, 0, 0);
 -- init mode for next 4 clock cycles: 
-CLOCK_DATA('0', '0', '1', '0', 'Z', 1, 4, 7, 0, 0, 0);
+CLOCK_DATA('0', '0', '0', '1', '0', 1, 4, 7, 0, 0, 0);
 -- init mode for next 3 clock cycles: 
-CLOCK_DATA('0', '0', '1', '0', 'Z', 2, 5, 8, 0, 0, 0);
+CLOCK_DATA('0', '0', '0', '1', '0', 2, 5, 8, 0, 0, 0);
 -- init mode for next 2 clock cycles: 
-CLOCK_DATA('0', '0', '1', '0', 'Z', 3, 6, 9, 0, 0, 0);
+CLOCK_DATA('0', '0', '0', '1', '0', 3, 6, 9, 0, 0, 0);
 -- init mode for next 1 clock cycles: 
-CLOCK_DATA('0', '0', '1', '0', 'Z', 0, 0, 0, 0, 0, 0);
+CLOCK_DATA('0', '0', '0', '0', '0', 0, 0, 0, 0, 0, 0);
 
 --going to compute  mode:
 -- loading 1st row:
-CLOCK_DATA('0', '0', '0', '1', 'Z', 0, 0, 0, 3, 6, 9);
--- loading 2nd row:
-CLOCK_DATA('0', '0', '0', '1', 'Z', 0, 0, 0, 2, 5, 8);
--- loading 3rd row:
-CLOCK_DATA('0', '0', '0', '1', 'Z', 0, 0, 0, 7, 8, 9);
+CLOCK_DATA('0', '0', '1', '0', '0', 0, 0, 0, 3, 6, 9);
+-- loading 2nd row
+CLOCK_DATA('0', '0', '1', '0', '0', 0, 0, 0, 2, 5, 8);
+-- loading 3rd row
+CLOCK_DATA('0', '0', '1', '0', '0', 0, 0, 0, 7, 8, 9);
 
 wait;
 end process;
