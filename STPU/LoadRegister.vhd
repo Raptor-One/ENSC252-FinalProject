@@ -8,13 +8,10 @@ PORT( clock, ld, reset: IN STD_LOGIC;
 		Q : OUT UNSIGNED(7 DOWNTO 0));
 END LoadRegister;
 
-<<<<<<< HEAD
+
 ARCHITECTURE BEHAVIOUR of LoadRegister IS
-	SIGNAL temp : UNSIGNED(7 DOWNTO 0);
-=======
-ARCHITECTURE structure of LoadRegister IS
 	SIGNAL temp : UNSIGNED(7 DOWNTO 0) := "00";
->>>>>>> 07caee7771e60de4ca31b98082373355556b06a1
+	
 BEGIN 
 	  
 	PROCESS(clock, reset)
