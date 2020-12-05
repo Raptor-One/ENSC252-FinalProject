@@ -8,10 +8,12 @@ PORT( clock, ld, reset: IN STD_LOGIC;
 		Q : OUT UNSIGNED(7 DOWNTO 0));
 END LoadRegister;
 
-ARCHITECTURE structure of LoadRegister IS
-	SIGNAL temp : UNSIGNED(7 DOWNTO 0);
-BEGIN 
 
+ARCHITECTURE BEHAVIOUR of LoadRegister IS
+	SIGNAL temp : UNSIGNED(7 DOWNTO 0) := "00000000";
+	
+BEGIN 
+	  
 	PROCESS(clock, reset)
 	BEGIN
 	IF(reset = '1') then
@@ -24,4 +26,4 @@ BEGIN
 	
 	Q <= temp;
 	
-END structure;
+END BEHAVIOUR;
