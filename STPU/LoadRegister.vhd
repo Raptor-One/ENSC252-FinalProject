@@ -10,7 +10,7 @@ END LoadRegister;
 
 
 ARCHITECTURE BEHAVIOUR of LoadRegister IS
-	SIGNAL temp : UNSIGNED(7 DOWNTO 0) := "00";
+	SIGNAL temp : UNSIGNED(7 DOWNTO 0) := "00000000";
 	
 BEGIN 
 	  
