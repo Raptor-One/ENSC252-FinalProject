@@ -8,7 +8,7 @@ GENERIC( matrixSize : UNSIGNED := "011" );
 PORT( clock, reset, hard_reset, stall, data_start : IN STD_LOGIC;
 		y_in0, y_in1, y_in2 : IN UNSIGNED(7 DOWNTO 0); -- there may be more inputs
 		done : out STD_LOGIC := '0';
-		row0, row1, row2 : OUT bus_type);
+		row0, row1, row2 : OUT bus_type := (TO_UNSIGNED(0,N), TO_UNSIGNED(0,N), TO_UNSIGNED(0,N)));
 END ActivationUnit;
 
 ARCHITECTURE Behaviour OF ActivationUnit IS
@@ -22,7 +22,7 @@ END COMPONENT;
 SIGNAL sc_reset, sc_enable : STD_LOGIC;
 SIGNAL timer : UNSIGNED(2 DOWNTO 0);
 TYPE matrix_buffer_type IS ARRAY (0 to 2, 0 to 1) OF UNSIGNED(N-1 DOWNTO 0);
-SIGNAL matrix_buffer : matrix_buffer_type := ((TO_UNSIGNED(0,N), TO_UNSIGNED(0,N)), (TO_UNSIGNED(0,N), TO_UNSIGNED(0,N)), (TO_UNSIGNED(0,N), TO_UNSIGNED(0,N)));
+SIGNAL matrix_buffer : matrix_buffer_type;
 BEGIN
 sc_reset <= reset OR hard_reset;
 sc_enable <= data_start AND NOT stall;

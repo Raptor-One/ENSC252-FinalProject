@@ -73,15 +73,26 @@ stall_sig <= '1';
 CLOCK;
 CLOCK;
 stall_sig <= '0';
-FOR i IN 7 DOWNTO 0 LOOP
+FOR i IN 2 DOWNTO 0 LOOP
 	CLOCK;
 END LOOP;
 stall_sig <= '1';
 CLOCK;
 stall_sig <= '0';
-FOR i IN 5 DOWNTO 0 LOOP
+FOR i IN 4 DOWNTO 0 LOOP
 	CLOCK;
 END LOOP;
+
+--test reset
+--hard_reset_sig <= '1';
+--CLOCK;
+--hard_reset_sig <= '0';
+--go_sig <= '1';
+--CLOCK;
+--go_sig <= '0';
+--FOR i IN 10 DOWNTO 0 LOOP
+--	CLOCK;
+--END LOOP;
 
 WAIT;
 END PROCESS;
