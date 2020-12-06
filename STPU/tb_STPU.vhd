@@ -26,7 +26,9 @@ PORT MAP(clock => clock_sig, reset => reset_sig, hard_reset => hard_reset_sig, s
 
 PROCESS IS
 
-PROCEDURE CLOCK_W_DATA_IN(constant weights : IN UNSIGNED(23 DOWNTO 0); constant a_in : IN UNSIGNED(23 DOWNTO 0)) IS
+PROCEDURE CLOCK_W_DATA_IN(constant w0 : IN INTEGER; constant w1 : IN INTEGER; constant w2 : IN INTEGER; constant a_in0 : IN INTEGER; constant a_in1 : IN INTEGER; constant a_in2 : IN INTEGER) IS
+VARIABLE weights : UNSIGNED(23 DOWNTO 0) := TO_UNSIGNED(w2,8) & TO_UNSIGNED(w1,8) & TO_UNSIGNED(w0,8);
+VARIABLE a_in : UNSIGNED(23 DOWNTO 0) := TO_UNSIGNED(a_in2,8) & TO_UNSIGNED(a_in1,8) & TO_UNSIGNED(a_in0,8);
 BEGIN
 clock_sig <= '0';
 weights_sig <= weights;
@@ -48,26 +50,33 @@ BEGIN
 wait for 20 ns;
 
 setup_sig <= '1';
-CLOCK_W_DATA_IN( TO_UNSIGNED(1,8) & TO_UNSIGNED(2,8) & TO_UNSIGNED(3,8), TO_UNSIGNED(0,24));
+CLOCK_W_DATA_IN(1, 2, 3, 3, 6, 9);
 setup_sig <= '0';
-CLOCK_W_DATA_IN( TO_UNSIGNED(4,8) & TO_UNSIGNED(5,8) & TO_UNSIGNED(6,8), TO_UNSIGNED(0,24));
+CLOCK_W_DATA_IN(4, 5, 6, 2, 5, 8);
 setup_sig <= '1'; -- test that setup wont be interrupted
-CLOCK_W_DATA_IN( TO_UNSIGNED(7,8) & TO_UNSIGNED(8,8) & TO_UNSIGNED(9,8), TO_UNSIGNED(0,24));
+CLOCK_W_DATA_IN(7, 8, 9, 7, 8, 9);
 setup_sig <= '0';
 
 --do nothing for a bit
 CLOCK;
 
+-- initiate go
 go_sig <= '1';
 CLOCK;
 go_sig <= '0';
 CLOCK;
-go_sig <= '1';
+go_sig <= '1'; -- make sure second go signal doesn't interrupt
 CLOCK;
 go_sig <= '0';
 CLOCK;
 stall_sig <= '1';
 CLOCK;
+CLOCK;
+stall_sig <= '0';
+FOR i IN 7 DOWNTO 0 LOOP
+	CLOCK;
+END LOOP;
+stall_sig <= '1';
 CLOCK;
 stall_sig <= '0';
 FOR i IN 5 DOWNTO 0 LOOP
