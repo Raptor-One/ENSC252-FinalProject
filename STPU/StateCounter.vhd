@@ -18,7 +18,7 @@ PROCESS(clock, reset)
 BEGIN
 IF(reset = '1') THEN
 	current_state <= (others => '0'); -- reset sets to 0
-ELSIF(rising_edge(clock) AND enable = '1') THEN -- only incremend when enabled
+ELSIF(rising_edge(clock) AND enable = '1') THEN -- only increment when enabled
 	current_state <= current_state + 1;
 	IF(current_state = maxState) THEN
 		current_state <= wrapBackState; -- set counter back to wrapBackState once maxState reached
