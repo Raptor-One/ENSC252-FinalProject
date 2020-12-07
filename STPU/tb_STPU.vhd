@@ -55,7 +55,7 @@ CLOCK_W_DATA_IN(1, 2, 3, 3, 6, 9);
 CLOCK_W_DATA_IN(4, 5, 6, 2, 5, 8);
 setup_sig <= '0'; -- test that setup wont be interrupted (holding it for 2 clock cycles)
 CLOCK_W_DATA_IN(7, 8, 9, 7, 8, 9);
-
+CLOCK;
 
 
 -- test normal go with no stalls
