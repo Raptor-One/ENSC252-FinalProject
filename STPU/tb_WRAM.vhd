@@ -57,9 +57,9 @@ wait for 20 ns;
 
 -- write data into all adresses - write will be registered on next rising edge
 wren_sig <= '1';
-CLOCK_W_DATA("00",78965);
+CLOCK_W_DATA("00",252);
 CLOCK_W_DATA("01",9001);
-CLOCK_W_DATA("10",3840);
+CLOCK_W_DATA("10",1207);
 CLOCK_W_DATA("11",43110);
 
 --read from all adresses - output will only change to new value after 2 rising edges

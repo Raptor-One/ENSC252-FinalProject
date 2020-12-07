@@ -49,18 +49,29 @@ BEGIN
 (clock_sig, reset_sig, hard_reset_sig, setup_sig, go_sig, stall_sig) <= TO_UNSIGNED(0,6);
 wait for 20 ns;
 
+-- test normal setup
 setup_sig <= '1';
 CLOCK_W_DATA_IN(1, 2, 3, 3, 6, 9);
-setup_sig <= '0';
 CLOCK_W_DATA_IN(4, 5, 6, 2, 5, 8);
-setup_sig <= '1'; -- test that setup wont be interrupted
+setup_sig <= '0'; -- test that setup wont be interrupted (holding it for 2 clock cycles)
 CLOCK_W_DATA_IN(7, 8, 9, 7, 8, 9);
-setup_sig <= '0';
 
---do nothing for a bit
+
+
+-- test normal go with no stalls
+go_sig <= '1';
 CLOCK;
+go_sig <= '0';
+FOR i IN 10 DOWNTO 0 LOOP
+	CLOCK;
+END LOOP;
 
--- initiate go
+-- soft reset, will set back to idle state ready 
+reset_sig <= '1';
+CLOCK;
+reset_sig <= '0';
+
+-- teset go with stalls but to completion
 go_sig <= '1';
 CLOCK;
 go_sig <= '0';
@@ -83,26 +94,62 @@ FOR i IN 4 DOWNTO 0 LOOP
 	CLOCK;
 END LOOP;
 
--- soft reset, will clear the uram but not wram, or current ouput, after compution it will output 0
+-- test setup but with reset interrupt (should reset)
+setup_sig <= '1';
+CLOCK_W_DATA_IN(1, 2, 3, 3, 6, 9);
+setup_sig <= '0';
 reset_sig <= '1';
-CLOCK;
+CLOCK_W_DATA_IN(4, 5, 6, 2, 5, 8);
 reset_sig <= '0';
+CLOCK;
+
+-- test setup but with go signal interrupt (setup should take priority)
+setup_sig <= '1';
+go_sig <= '1';
+CLOCK_W_DATA_IN(1, 2, 3, 3, 6, 9);
+setup_sig <= '0';
+CLOCK_W_DATA_IN(4, 5, 6, 2, 5, 8);
+go_sig <= '0';
+setup_sig <= '1'; -- test that setup wont be interrupted
+CLOCK_W_DATA_IN(7, 8, 9, 7, 8, 9);
+setup_sig <= '0';
+
+
+-- test go, but interrupt with setup then reset
 go_sig <= '1';
 CLOCK;
 go_sig <= '0';
-FOR i IN 10 DOWNTO 0 LOOP
+FOR i IN 4 DOWNTO 0 LOOP
 	CLOCK;
 END LOOP;
+reset_sig <= '1';
+CLOCK;
+reset_sig <= '0';
+CLOCK;
 
--- hard reset, will clear all ral
+
+-- test go, but interrupt with hard reset
+go_sig <= '1';
+CLOCK;
+go_sig <= '0';
+FOR i IN 4 DOWNTO 0 LOOP
+	CLOCK;
+END LOOP;
 hard_reset_sig <= '1';
 CLOCK;
 hard_reset_sig <= '0';
 CLOCK;
 CLOCK;
+
+
+-- test that hard reset worked, output should be 0 - try to interupt go with setup (shouldn't work)
+CLOCK;
 go_sig <= '1';
 CLOCK;
 go_sig <= '0';
+setup_sig <= '1';
+CLOCK;
+setup_sig <= '0';
 FOR i IN 10 DOWNTO 0 LOOP
 	CLOCK;
 END LOOP;

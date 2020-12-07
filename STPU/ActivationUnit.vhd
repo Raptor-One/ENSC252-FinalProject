@@ -4,7 +4,7 @@ USE ieee.numeric_std.all;
 USE work.systolic_package.all; 
 
 ENTITY ActivationUnit IS
-PORT( clock, reset, hard_reset, stall, data_start : IN STD_LOGIC;
+PORT( clock, reset, hard_reset, stall, calc_active : IN STD_LOGIC;
 		y_in0, y_in1, y_in2 : IN UNSIGNED(N-1 DOWNTO 0); -- there may be more inputs
 		done : out STD_LOGIC := '0';
 		row0, row1, row2 : OUT bus_type := (TO_UNSIGNED(0,N), TO_UNSIGNED(0,N), TO_UNSIGNED(0,N)));
@@ -24,7 +24,7 @@ TYPE matrix_buffer_type IS ARRAY (0 to 2, 0 to 1) OF UNSIGNED(N-1 DOWNTO 0);
 SIGNAL matrix_buffer : matrix_buffer_type;
 BEGIN
 sc_reset <= reset OR hard_reset;
-sc_enable <= data_start AND NOT stall;
+sc_enable <= calc_active AND NOT stall;
 sc : StateCounter GENERIC MAP(maxState => MATRIX_SIZE + 4, wrapBackState => MATRIX_SIZE + 2)
 PORT MAP(clock => clock, reset => sc_reset, enable => sc_enable, state => timer);
 
@@ -45,7 +45,7 @@ PROCESS(clock, reset, hard_reset)
 BEGIN
 IF(reset = '1' OR hard_reset = '1') THEN
 	done <= '0';
-ELSIF(rising_edge(clock) AND stall = '0' AND data_start = '1') THEN
+ELSIF(rising_edge(clock) AND stall = '0' AND calc_active = '1') THEN -- checking for stall and active here again prevents values from changing during stall
 	done <= '0';
 	-- depending on current state of timer, load data in the buffer and current value into an output row
 	IF(timer = MATRIX_SIZE + 2) THEN

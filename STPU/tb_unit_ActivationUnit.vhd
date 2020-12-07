@@ -8,8 +8,7 @@ END tb_unit_ActivationUnit;
 
 ARCHITECTURE test of tb_unit_ActivationUnit IS
 COMPONENT ActivationUnit IS
-GENERIC( matrixSize : UNSIGNED := "011" );
-PORT( clock, reset, hard_reset, stall, data_start : IN STD_LOGIC;
+PORT( clock, reset, hard_reset, stall, calc_active : IN STD_LOGIC;
 		y_in0, y_in1, y_in2 : IN UNSIGNED(7 DOWNTO 0);
 		done : out STD_LOGIC;
 		row0, row1, row2 : OUT bus_type);
@@ -21,7 +20,7 @@ SIGNAL row0_sig, row1_sig, row2_sig : bus_type;
 
 BEGIN
 DUT : ActivationUnit
-PORT MAP(clock => clock_sig, reset => reset_sig, hard_reset => hard_reset_sig, stall => stall_sig, data_start => data_start_sig, 
+PORT MAP(clock => clock_sig, reset => reset_sig, hard_reset => hard_reset_sig, stall => stall_sig, calc_active => data_start_sig, 
 			y_in0 => y_in0_sig, y_in1 => y_in1_sig, y_in2 => y_in2_sig, row0 => row0_sig, row1 => row1_sig, row2 => row2_sig, done => done_sig);
 
 PROCESS IS
