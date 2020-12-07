@@ -63,7 +63,7 @@ BEGIN
 	CLOCK_W_DATA(0,4,2);
 	CLOCK_W_DATA(0,0,1);
 	
-	--test reset (note both resets should have identical behaviour)
+	--test reset (soft)
 	data_start_sig <= '0';
 	reset_sig <= '1';
 	wait for 20 ns;
@@ -90,6 +90,12 @@ BEGIN
 	stall_sig <= '1'; -- test after done (done signal should be kept raised)
 	CLOCK_W_DATA(99,99,99); -- garbage data that should be ignored
 	stall_sig <= '0'; -- continue
+	
+	--test reset (hard)
+	data_start_sig <= '0';
+	hard_reset_sig <= '1';
+	wait for 20 ns;
+	hard_reset_sig <= '0';
 	
 	WAIT; --process is done, wait for completion
 END PROCESS;

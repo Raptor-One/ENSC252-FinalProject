@@ -83,16 +83,29 @@ FOR i IN 4 DOWNTO 0 LOOP
 	CLOCK;
 END LOOP;
 
---test reset
---hard_reset_sig <= '1';
---CLOCK;
---hard_reset_sig <= '0';
---go_sig <= '1';
---CLOCK;
---go_sig <= '0';
---FOR i IN 10 DOWNTO 0 LOOP
---	CLOCK;
---END LOOP;
+-- soft reset, will clear the uram but not wram, or current ouput, after compution it will output 0
+reset_sig <= '1';
+CLOCK;
+reset_sig <= '0';
+go_sig <= '1';
+CLOCK;
+go_sig <= '0';
+FOR i IN 10 DOWNTO 0 LOOP
+	CLOCK;
+END LOOP;
+
+-- hard reset, will clear all ral
+hard_reset_sig <= '1';
+CLOCK;
+hard_reset_sig <= '0';
+CLOCK;
+CLOCK;
+go_sig <= '1';
+CLOCK;
+go_sig <= '0';
+FOR i IN 10 DOWNTO 0 LOOP
+	CLOCK;
+END LOOP;
 
 WAIT;
 END PROCESS;
