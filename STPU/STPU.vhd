@@ -98,7 +98,7 @@ PORT MAP(clock => clock, reset => setup_sc_reset, enable => setup_sc_enable, sta
 w_data_in <= STD_LOGIC_VECTOR(weights) WHEN hreset_sc_enable = '0' ELSE (others => '0');
 wram_write <= setup_sc_enable OR hreset_sc_enable;
 
--- setup & go TODO: ADD STALL LOGIc
+-- setup & go
 PROCESS(setupState, goState, hresetState, go, hreset_sc_enable)
 BEGIN
 wram_addr <= STD_LOGIC_VECTOR(setupState);
